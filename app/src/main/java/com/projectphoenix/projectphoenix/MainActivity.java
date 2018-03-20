@@ -1,119 +1,101 @@
 package com.projectphoenix.projectphoenix;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.view.View;
-import android.widget.Button;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-
-public class MainActivity extends AppCompatActivity {
-    AvctivateTask activateTask = null;
-    DeactivateTask deactivateTask = null;
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        final Button activate = findViewById(R.id.activateButton);
-        final Button deactivate = findViewById(R.id.deactivateButton);
-
-        activate.setOnClickListener(new View.OnClickListener(){
-
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                MainActivity.this.activateTask = new AvctivateTask(MainActivity.this);
-                MainActivity.this.activateTask.execute((Void) null);
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
 
-        deactivate.setOnClickListener(new View.OnClickListener(){
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
-            @Override
-            public void onClick(View v) {
-                MainActivity.this.deactivateTask = new DeactivateTask(MainActivity.this);
-                MainActivity.this.deactivateTask.execute((Void) null);
-            }
-        });
-        
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
-    public class AvctivateTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final Context mContext;
-        private final Button activateButton = findViewById(R.id.activateButton);
-        private final Button deactivateButton = findViewById(R.id.deactivateButton);
-
-        AvctivateTask(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            SharedPreferences sharedPref = mContext.getSharedPreferences("phoenix", Context.MODE_PRIVATE);
-            String ip = sharedPref.getString("ip", "");
-            try {
-                URL url = new URL("http://" + ip + ":5000/api/extinguish");
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-
-                int responseCode = conn.getResponseCode();
-                Log.d("Activate", String.valueOf(responseCode));
-                activateButton.setVisibility(View.GONE);
-                deactivateButton.setVisibility(View.VISIBLE);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 
-    public class DeactivateTask extends AsyncTask<Void, Void, Boolean> {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
-        private final Context mContext;
-        private final Button activateButton = findViewById(R.id.activateButton);
-        private final Button deactivateButton = findViewById(R.id.deactivateButton);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        DeactivateTask(Context context) {
-            mContext = context;
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
         }
 
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            SharedPreferences sharedPref = mContext.getSharedPreferences("phoenix", Context.MODE_PRIVATE);
-            String ip = sharedPref.getString("ip", "");
-            try {
-                URL url = new URL("http://" + ip + ":5000/api/stop");
+        return super.onOptionsItemSelected(item);
+    }
 
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
 
-                int responseCode = conn.getResponseCode();
-                Log.d("Deactivate", String.valueOf(responseCode));
-                activateButton.setVisibility(View.VISIBLE);
-                deactivateButton.setVisibility(View.GONE);
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
         }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }
