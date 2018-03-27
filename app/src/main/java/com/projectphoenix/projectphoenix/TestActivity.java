@@ -24,8 +24,8 @@ public class TestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
-        final Button activate = findViewById(R.id.activateButton);
-        final Button deactivate = findViewById(R.id.deactivateButton);
+        final Button activate = (Button) findViewById(R.id.activateButton);
+        final Button deactivate = (Button) findViewById(R.id.deactivateButton);
 
         activate.setOnClickListener(new View.OnClickListener(){
 
@@ -50,8 +50,8 @@ public class TestActivity extends AppCompatActivity {
     public class AvctivateTask extends AsyncTask<Void, Void, Boolean> {
 
         private final Context mContext;
-        private final Button activateButton = findViewById(R.id.activateButton);
-        private final Button deactivateButton = findViewById(R.id.deactivateButton);
+        private final Button activateButton = (Button) findViewById(R.id.activateButton);
+        private final Button deactivateButton = (Button) findViewById(R.id.deactivateButton);
 
         AvctivateTask(Context context) {
             mContext = context;
@@ -83,8 +83,8 @@ public class TestActivity extends AppCompatActivity {
     public class DeactivateTask extends AsyncTask<Void, Void, Boolean> {
 
         private final Context mContext;
-        private final Button activateButton = findViewById(R.id.activateButton);
-        private final Button deactivateButton = findViewById(R.id.deactivateButton);
+        private final Button activateButton = (Button) findViewById(R.id.activateButton);
+        private final Button deactivateButton = (Button) findViewById(R.id.deactivateButton);
 
         DeactivateTask(Context context) {
             mContext = context;
