@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
     private GetFireActivity getFireActivity;
     private List<String[]> fireList;
+    private static ToggleButton pulseToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +69,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    Log.v("Checked", "CHECKED");
                     Utils.ActivateTask taskActivate = new Utils.ActivateTask(MainActivity.this);
                     taskActivate.execute();
                 } else {
-                    Log.v("Checked", "UNCHECKED");
                     Utils.DeactivateTask taskDeactivate = new Utils.DeactivateTask(MainActivity.this);
                     taskDeactivate.execute();
+                }
+            }
+        });
+
+        pulseToggle = (ToggleButton) findViewById(R.id.pulseToggle);
+        pulseToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    Utils.PulseTask taskPulse = new Utils.PulseTask(MainActivity.this);
+                    taskPulse.execute();
                 }
             }
         });
@@ -133,26 +144,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        TextView mapErrorView = (TextView) findViewById(R.id.mapError);
+        MapView map = (MapView) findViewById(R.id.mapView);
         gmap = googleMap;
         gmap.setMinZoomPreference(10);
-        Address address = Utils.getCoords(this, "11317 Mercury Ct, Mira Loma, CA 91752").get(0);
-        LatLng home = new LatLng(address.getLatitude(), address.getLongitude());
-        gmap.moveCamera(CameraUpdateFactory.newLatLng(home));
-        gmap.addMarker(new MarkerOptions().position(home).title("Home"));
+        List<Address> aList = Utils.getCoords(this, "11317 Mercury Ct, Mira Loma, CA 91752");
+        if(aList != null) {
+            Address address = aList.get(0);
+            LatLng home = new LatLng(address.getLatitude(), address.getLongitude());
+            gmap.moveCamera(CameraUpdateFactory.newLatLng(home));
+            gmap.addMarker(new MarkerOptions().position(home).title("Home"));
 
-        getFireActivity = new GetFireActivity("https://firms.modaps.eosdis.nasa.gov/active_fire/viirs/text/VNP14IMGTDL_NRT_USA_contiguous_and_Hawaii_24h.csv", gmap);
-        getFireActivity.execute();
-        try {
-            fireList = getFireActivity.get();
-            String[] row;
-            for(int i = 1; i < fireList.size(); i++) {
-                row = (String[]) fireList.get(i);
-                gmap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(row[0]), Double.valueOf(row[1]))).title(row[5] + " at " + row[6]));
+            getFireActivity = new GetFireActivity("https://firms.modaps.eosdis.nasa.gov/active_fire/viirs/text/VNP14IMGTDL_NRT_USA_contiguous_and_Hawaii_24h.csv", gmap);
+            getFireActivity.execute();
+            try {
+                fireList = getFireActivity.get();
+                String[] row;
+                for (int i = 1; i < fireList.size(); i++) {
+                    row = (String[]) fireList.get(i);
+                    gmap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(row[0]), Double.valueOf(row[1]))).title(row[5] + " at " + row[6]));
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } else {
+            mapErrorView.setVisibility(View.VISIBLE);
+            map.setVisibility(View.GONE);
         }
     }
 

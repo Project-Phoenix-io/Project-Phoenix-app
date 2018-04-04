@@ -6,18 +6,23 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ToggleButton;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by KooTG on 3/20/2018.
@@ -32,11 +37,15 @@ public class Utils {
 
     public static List<Address> getCoords(Context context, String location) {
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(location, 5);
-            return addresses;
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(geocoder != null) {
+            try {
+                List<Address> addresses = geocoder.getFromLocationName(location, 5);
+                return addresses;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
             return null;
         }
     }
@@ -70,7 +79,7 @@ public class Utils {
             SharedPreferences sharedPref = mContext.getSharedPreferences("phoenix", Context.MODE_PRIVATE);
             String ip = sharedPref.getString("ip", "");
             try {
-                URL url = new URL("http://" + ip + ":5000/api/extinguish");
+                URL url = new URL("http://" + ip + ":5000/api/activate");
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(15000 /* milliseconds */);
@@ -97,7 +106,7 @@ public class Utils {
             SharedPreferences sharedPref = mContext.getSharedPreferences("phoenix", Context.MODE_PRIVATE);
             String ip = sharedPref.getString("ip", "");
             try {
-                URL url = new URL("http://" + ip + ":5000/api/stop");
+                URL url = new URL("http://" + ip + ":5000/api/shutdown");
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(15000 /* milliseconds */);
@@ -111,6 +120,53 @@ public class Utils {
             }
             return null;
         }
+    }
+
+    public static class PulseTask extends AsyncTask<Void, Void, Void> {
+
+        private final Context mContext;
+
+        public PulseTask(Context context) { mContext = context;}
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SharedPreferences sharedPref = mContext.getSharedPreferences("phoenix", Context.MODE_PRIVATE);
+            String ip = sharedPref.getString("ip", "");
+            try {
+                URL url = new URL("http://" + ip + ":5000/api/pulse");
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(500 /* milliseconds */);
+                conn.setConnectTimeout(500 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(getPostDataString());
+                writer.flush();
+                writer.close();
+                os.close();
+
+                if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    conn.disconnect();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+//        @Override
+//        protected Boolean onPostExecute(Boolean success) {
+//            return true;
+//        }
+    }
+
+    private static String getPostDataString() throws Exception {
+        return "timeOn=" + URLEncoder.encode("1", "UTF-8") + "&timeOff=" + URLEncoder.encode("1", "UTF-8") + "&iterations=" + URLEncoder.encode("2", "UTF-8");
     }
 
 }
