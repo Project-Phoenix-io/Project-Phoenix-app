@@ -191,7 +191,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     String line = "";
 
                     while ((line = in.readLine()) != null) {
-
                         sb.append(line);
                         break;
                     }
