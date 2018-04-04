@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.net.ssl.HttpsURLConnection;
-
 /**
  * Created by KooTG on 3/20/2018.
  */
@@ -120,53 +118,6 @@ public class Utils {
             }
             return null;
         }
-    }
-
-    public static class PulseTask extends AsyncTask<Void, Void, Void> {
-
-        private final Context mContext;
-
-        public PulseTask(Context context) { mContext = context;}
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            SharedPreferences sharedPref = mContext.getSharedPreferences("phoenix", Context.MODE_PRIVATE);
-            String ip = sharedPref.getString("ip", "");
-            try {
-                URL url = new URL("http://" + ip + ":5000/api/pulse");
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(500 /* milliseconds */);
-                conn.setConnectTimeout(500 /* milliseconds */);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getPostDataString());
-                writer.flush();
-                writer.close();
-                os.close();
-
-                if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    conn.disconnect();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-//        @Override
-//        protected Boolean onPostExecute(Boolean success) {
-//            return true;
-//        }
-    }
-
-    private static String getPostDataString() throws Exception {
-        return "timeOn=" + URLEncoder.encode("1", "UTF-8") + "&timeOff=" + URLEncoder.encode("1", "UTF-8") + "&iterations=" + URLEncoder.encode("2", "UTF-8");
     }
 
 }

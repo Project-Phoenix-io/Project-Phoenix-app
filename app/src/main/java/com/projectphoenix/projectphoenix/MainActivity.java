@@ -1,5 +1,7 @@
 package com.projectphoenix.projectphoenix;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,10 +29,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -82,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    Utils.PulseTask taskPulse = new Utils.PulseTask(MainActivity.this);
+                    PulseTask taskPulse = new PulseTask(MainActivity.this);
                     taskPulse.execute();
                 }
             }
@@ -268,5 +275,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
+    }
+
+
+    public static class PulseTask extends AsyncTask<Void, Void, Void> {
+
+        private final Context mContext;
+
+        public PulseTask(Context context) { mContext = context;}
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SharedPreferences sharedPref = mContext.getSharedPreferences("phoenix", Context.MODE_PRIVATE);
+            String ip = sharedPref.getString("ip", "");
+            try {
+                URL url = new URL("http://" + ip + ":5000/api/pulse");
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(50000 /* milliseconds */);
+                conn.setConnectTimeout(50000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(getPostDataString());
+                writer.flush();
+                writer.close();
+                os.close();
+
+                if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    conn.disconnect();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                pulseToggle.setChecked(false);
+            }
+            return null;
+        }
+
+    }
+
+    private static String getPostDataString() throws Exception {
+        return "timeOn=" + URLEncoder.encode("1", "UTF-8") + "&timeOff=" + URLEncoder.encode("1", "UTF-8") + "&iterations=" + URLEncoder.encode("2", "UTF-8");
     }
 }
