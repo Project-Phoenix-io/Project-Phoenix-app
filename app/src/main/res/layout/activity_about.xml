@@ -23,6 +23,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="match_parent"
+                android:layout_height="188dp"
+                app:srcCompat="@drawable/group_photo4"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="44dp" />
+
             <TextView
                 android:id="@+id/aboutTitle"
                 android:layout_width="match_parent"
@@ -42,76 +50,47 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <GridView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <View
-                    android:id="@+id/sideBarTitle2"
-                    android:layout_width="match_parent"
-                    android:layout_height="4dp"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="4dp"
-                    android:background="#8b8b8b"
-                    app:layout_constraintStart_toEndOf="@+id/about2Title"
-                    tools:layout_editor_absoluteY="54dp" />
-
-                <TextView
-                    android:id="@+id/about2Title"
-                    android:layout_width="match_parent"
-                    android:layout_height="22dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:text="Our Story"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.501"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/aboutTitle" />
-
-                <View
-                    android:id="@+id/sideBarTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="4dp"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="4dp"
-                    android:background="#8b8b8b"
-                    app:layout_constraintEnd_toStartOf="@+id/about2Title"
-                    tools:layout_editor_absoluteY="53dp" />
-            </GridView>
-
-            <ImageView
-                android:id="@+id/imageView10"
-                android:layout_width="match_parent"
-                android:layout_height="245dp"
-                app:srcCompat="@drawable/group_photo4"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="44dp" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/aboutP1"
                 android:layout_width="match_parent"
-                android:layout_height="132dp"
-                android:text="          Project Phoenix is an app-based wildfire prevention system, designed for the average homeowner. The idea for the system originated in the wake of the 2017 California wildfire season, which is the most destructive wildfire season on record, with nearly 10,000 structures completely destroyed. We wanted to create a system that would allow families to protect their homes immediately, no matter where they are. "
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="\t\t\t\t\tProject Phoenix is an app-based wildfire prevention system, designed for the average homeowner. The idea for the system originated in the wake of the 2017 California wildfire season, which is the most destructive wildfire season on record, with nearly 10,000 structures completely destroyed. We wanted to create a system that would allow families to protect their homes immediately, no matter where they are. "
+                android:visibility="gone"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="261dp" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/aboutP2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="          Here at Santiago High School, we have worked together for months in order to make this dream a reality. We also reached out to the City of Corona Fire Department, as well as to local hardware stores for data and measurements in regard to fires and how to prevent and suppress them. From these sources we gathered vital information allowing us to create an optimal sprinkler system. The aid we’ve received from our community is immeasurable."
+                android:layout_marginBottom="5dp"
+                android:text="\t\t\t\t\tHere at Santiago High School, we have worked together for months in order to make this dream a reality. We also reached out to the City of Corona Fire Department, as well as to local hardware stores for data and measurements in regard to fires and how to prevent and suppress them. From these sources we gathered vital information allowing us to create an optimal sprinkler system. The aid we’ve received from our community is immeasurable."
+                android:visibility="gone"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="393dp" />
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/aboutP3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="          We named the system Project Phoenix to represent the persistence and determination of the Californian people as we persevere through destruction caused by this disastrous event. It knocked us down, but we will always get back up and rise from the ashes, better and stronger than before."
+                android:layout_marginBottom="5dp"
+                android:text="\t\t\t\t\tWe named the system Project Phoenix to represent the persistence and determination of the Californian people as we persevere through destruction caused by this disastrous event. It knocked us down, but we will always get back up and rise from the ashes, better and stronger than before."
+                android:visibility="gone"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="529dp" />
 
+            <WebView
+                android:id="@+id/aboutParagraphs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteX="155dp"
+                tools:layout_editor_absoluteY="272dp" />
+
         </LinearLayout>
+
+
     </ScrollView>
 
 </android.support.constraint.ConstraintLayout>
