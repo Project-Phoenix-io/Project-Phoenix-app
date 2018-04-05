@@ -21,6 +21,8 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.esri.arcgisruntime.mapping.ArcGISMap;
+import com.esri.arcgisruntime.mapping.Basemap;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -55,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+//        ArcGISMap map = new ArcGISMap(Basemap.createImagery());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(mapViewBundle);
         mapView.getMapAsync(this);
+
     }
 
     @Override
@@ -151,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onMapReady(GoogleMap googleMap) {
         TextView mapErrorView = (TextView) findViewById(R.id.mapError);
-        MapView map = (MapView) findViewById(R.id.mapView);
+        MapView mapView = (MapView) findViewById(R.id.mapView);
         gmap = googleMap;
         gmap.setMinZoomPreference(10);
         List<Address> aList = Utils.getCoords(this, "11317 Mercury Ct, Mira Loma, CA 91752");
@@ -159,25 +164,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Address address = aList.get(0);
             LatLng home = new LatLng(address.getLatitude(), address.getLongitude());
             gmap.moveCamera(CameraUpdateFactory.newLatLng(home));
-            gmap.addMarker(new MarkerOptions().position(home).title("Home"));
+//            gmap.addMarker(new MarkerOptions().position(home).title("Home"));
+            ArcGISMap arcMap = new ArcGISMap(Basemap.Type.TOPOGRAPHIC, home.latitude, home.longitude, 16);
 
-            getFireActivity = new GetFireActivity("https://firms.modaps.eosdis.nasa.gov/active_fire/viirs/text/VNP14IMGTDL_NRT_USA_contiguous_and_Hawaii_24h.csv", gmap);
-            getFireActivity.execute();
-            try {
-                fireList = getFireActivity.get();
-                String[] row;
-                for (int i = 1; i < fireList.size(); i++) {
-                    row = (String[]) fireList.get(i);
-                    gmap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(row[0]), Double.valueOf(row[1]))).title(row[5] + " at " + row[6]));
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+//            getFireActivity = new GetFireActivity("https://firms.modaps.eosdis.nasa.gov/active_fire/viirs/text/VNP14IMGTDL_NRT_USA_contiguous_and_Hawaii_24h.csv", gmap);
+//            getFireActivity.execute();
+//            try {
+//                fireList = getFireActivity.get();
+//                String[] row;
+//                for (int i = 1; i < fireList.size(); i++) {
+//                    row = (String[]) fireList.get(i);
+//                    gmap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(row[0]), Double.valueOf(row[1]))).title(row[5] + " at " + row[6]));
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            }
         } else {
             mapErrorView.setVisibility(View.VISIBLE);
-            map.setVisibility(View.GONE);
+            mapView.setVisibility(View.GONE);
         }
     }
 
